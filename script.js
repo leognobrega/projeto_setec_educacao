@@ -13,15 +13,15 @@ if (menuToggle && menu) {
 
 const frontMap = {
   infantil: {
-    label: 'Frente Infantil',
+    label: 'Jornada Educacional Infantil',
     page: 'frente-infantil.html',
   },
   adulto: {
-    label: 'Frente Adulto',
+    label: 'Jornada Educacional Adulto',
     page: 'frente-adulto.html',
   },
   reeducacional: {
-    label: 'Frente Reeducacional',
+    label: 'Jornada Reeducacional',
     page: 'frente-reeducacional.html',
   },
 };
@@ -617,6 +617,94 @@ if (questionContainer) {
           return;
         }
 
+        currentQuestionIndex += 1;
+        renderQuestion();
+        questionContainer.querySelector('.question-card h3').focus();
+      }
+    });
+  } else if (bodyFront === 'adulto') {
+    let currentQuestionIndex = 0;
+    let correctAnswers = 0;
+
+    const renderQuestion = () => {
+      const item = filteredQuestions[currentQuestionIndex];
+      const optionButtons = Object.entries(item.opcoes)
+        .map(([key, value]) => `
+          <button class="answer-button" data-answer="${key}" data-correct="${item.resposta_correta}">
+            ${key}. ${value}
+          </button>
+        `)
+        .join('');
+
+      questionContainer.innerHTML = `
+        <article class="question-card">
+          <div class="question-header">
+            <span class="question-number">Pergunta ${currentQuestionIndex + 1} de ${filteredQuestions.length}</span>
+            <span class="question-answer">Escolha sua resposta</span>
+          </div>
+          <h3 tabindex="-1">${item.pergunta}</h3>
+          <div class="answer-options">${optionButtons}</div>
+          <div class="feedback-box" aria-live="polite"></div>
+          <div class="question-justification" hidden></div>
+          <button class="next-question" type="button" hidden>
+            ${currentQuestionIndex === filteredQuestions.length - 1 ? 'Concluir desafio' : 'Próxima pergunta'}
+          </button>
+        </article>
+      `;
+    };
+
+    const renderCompletion = () => {
+      questionContainer.innerHTML = `
+        <article class="question-card quiz-complete">
+          <p class="question-number">Desafio concluído</p>
+          <h3>Etapa concluída.</h3>
+          <p>Você acertou ${correctAnswers} de ${filteredQuestions.length} perguntas. Continue aplicando esse cuidado em cada trajeto.</p>
+          <button class="next-question restart-quiz" type="button">Refazer desafio</button>
+        </article>
+      `;
+    };
+
+    renderQuestion();
+
+    questionContainer.addEventListener('click', (event) => {
+      const button = event.target.closest('.answer-button');
+      if (button) {
+        const card = button.closest('.question-card');
+        const feedbackBox = card.querySelector('.feedback-box');
+        const explanation = card.querySelector('.question-justification');
+        const correctAnswer = button.dataset.correct;
+        const selectedAnswer = button.dataset.answer;
+        const isCorrect = selectedAnswer === correctAnswer;
+
+        card.querySelectorAll('.answer-button').forEach((option) => {
+          option.disabled = true;
+          if (option.dataset.answer === correctAnswer) option.classList.add('correct');
+          if (option.dataset.answer === selectedAnswer && !isCorrect) option.classList.add('wrong');
+        });
+
+        if (isCorrect) correctAnswers += 1;
+        feedbackBox.textContent = isCorrect
+          ? 'Resposta correta. Boa escolha!'
+          : 'Resposta incorreta. Confira a explicação e siga para a próxima questão.';
+        feedbackBox.classList.add(isCorrect ? 'correct' : 'wrong', 'visible');
+        explanation.innerHTML = `<strong>Justificativa:</strong> ${filteredQuestions[currentQuestionIndex].justificativa}`;
+        explanation.hidden = false;
+        card.querySelector('.next-question').hidden = false;
+        return;
+      }
+
+      if (event.target.closest('.restart-quiz')) {
+        currentQuestionIndex = 0;
+        correctAnswers = 0;
+        renderQuestion();
+        return;
+      }
+
+      if (event.target.closest('.next-question')) {
+        if (currentQuestionIndex === filteredQuestions.length - 1) {
+          renderCompletion();
+          return;
+        }
         currentQuestionIndex += 1;
         renderQuestion();
         questionContainer.querySelector('.question-card h3').focus();

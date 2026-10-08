@@ -1,4 +1,4 @@
-# Mobilidade Urbana - Projeto de Educação e Reeducação no Trânsito
+# EducaTrânsito - Educação e Reeducação no Trânsito
 
 Este projeto reúne as regras, fluxos e arquitetura inicial para o desenvolvimento do sistema de mobilidade urbana com foco em educação e reciclagem de CNH.
 
@@ -31,4 +31,4 @@ Este projeto reúne as regras, fluxos e arquitetura inicial para o desenvolvimen
 - Definir a stack do front-end em React Native ou Web
 - Estruturar o back-end NestJS com autenticação JWT + Argon2
 - Implementar o módulo de quiz e histórico de partidas
-# projeto_setec_educacao
+# EducaTrânsito
