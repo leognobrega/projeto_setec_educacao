@@ -248,6 +248,219 @@ if (loginForm) {
 
 const questionContainer = document.getElementById('questions-container');
 
+const learningPath = document.getElementById('learning-path');
+const lessonView = document.getElementById('lesson-view');
+
+if (learningPath && lessonView) {
+  const pathStorageKey = 'setec-reeducacional-progress-v1';
+  const lessons = [
+    ['Responsabilidade no trânsito', 'Reconhecer o impacto das próprias escolhas.', 'A segurança no trânsito depende de quem?', ['Somente dos órgãos de fiscalização.', 'De todos que participam da circulação.', 'Apenas de quem dirige veículos grandes.'], 1, 'Cada pessoa tem responsabilidade pela própria conduta e pela proteção das demais.'],
+    ['A infração e suas consequências', 'Entender o que acontece depois de uma autuação.', 'Receber uma multa deve ser entendido como:', ['Um registro sem relação com a segurança.', 'Uma oportunidade de rever a conduta e seus riscos.', 'Uma autorização para repetir a infração após o pagamento.'], 1, 'A autuação registra uma conduta que precisa ser compreendida para evitar novos riscos.'],
+    ['Sinalização viária', 'Interpretar sinais antes de agir.', 'Ao encontrar uma sinalização que você não reconhece, o mais seguro é:', ['Reduzir a velocidade e agir com cautela.', 'Seguir o fluxo sem observar o sinal.', 'Parar no meio da pista para consultar o celular.'], 0, 'Reduzir e observar permite reagir com segurança sem criar um novo perigo.'],
+    ['Velocidade: limite e contexto', 'Adequar a velocidade ao ambiente.', 'Mesmo dentro do limite sinalizado, pode ser necessário reduzir quando:', ['A via está molhada ou a visibilidade está baixa.', 'O trânsito está livre.', 'O veículo da frente está distante.'], 0, 'O limite não elimina a necessidade de adequar a velocidade às condições da via.'],
+    ['Velocidade e distância de parada', 'Perceber como a velocidade afeta a reação.', 'Quando a velocidade aumenta, a distância necessária para parar tende a:', ['Diminuir.', 'Permanecer sempre igual.', 'Aumentar.'], 2, 'Mais velocidade significa menos tempo para reagir e mais espaço para imobilizar o veículo.'],
+    ['Distância segura', 'Manter espaço para reagir.', 'Para manter uma distância segura do veículo da frente, você deve:', ['Acompanhar de perto para evitar que outro veículo entre.', 'Manter espaço suficiente para reagir e frear.', 'Olhar apenas para o veículo da frente.'], 1, 'O espaço de segurança ajuda a evitar colisões diante de uma freada ou imprevisto.'],
+    ['Atenção ao dirigir', 'Reduzir distrações durante o trajeto.', 'Qual atitude preserva melhor a atenção ao volante?', ['Ajustar o GPS com o veículo em movimento.', 'Deixar o celular guardado e configurar a rota antes de sair.', 'Alternar o olhar entre a via e as notificações.'], 1, 'Preparar a rota antes da viagem evita que a atenção saia da via.'],
+    ['Celular e direção', 'Compreender o risco da distração.', 'Uma mensagem chega enquanto você dirige. O que fazer?', ['Ler rapidamente no próximo semáforo.', 'Parar em local seguro antes de olhar o aparelho.', 'Segurar o celular abaixo da linha do painel.'], 1, 'Mesmo uma consulta breve desvia atenção. Pare em local seguro antes de usar o aparelho.'],
+    ['Álcool e direção', 'Separar consumo de álcool e condução.', 'Se você consumiu bebida alcoólica, qual é a escolha segura?', ['Esperar alguns minutos e dirigir devagar.', 'Pedir que alguém sóbrio conduza ou escolher outro transporte.', 'Tomar café antes de sair.'], 1, 'Não há atalho confiável para eliminar os efeitos do álcool. Não conduza após consumir.'],
+    ['Sono e fadiga', 'Identificar sinais de cansaço.', 'Durante o trajeto, você começa a bocejar e perde concentração. O que fazer?', ['Abrir a janela e manter a velocidade.', 'Parar em local seguro e descansar antes de continuar.', 'Aumentar o volume do rádio.'], 1, 'Cansaço reduz atenção e tempo de reação. Interromper a viagem é a medida responsável.'],
+    ['Cinto de segurança', 'Proteger todos os ocupantes.', 'Quem deve usar o cinto de segurança?', ['Somente quem está nos bancos dianteiros.', 'Todas as pessoas no veículo.', 'Apenas em rodovias.'], 1, 'O cinto protege todos os ocupantes em qualquer trajeto.'],
+    ['Respeito aos vulneráveis', 'Proteger quem está mais exposto.', 'Ao se aproximar de pedestres ou ciclistas, a conduta adequada é:', ['Reduzir a velocidade e manter distância lateral segura.', 'Buzinar para que saiam do caminho.', 'Manter a velocidade se houver espaço na faixa.'], 0, 'Pedestres e ciclistas estão mais expostos. A condução deve priorizar sua segurança.'],
+    ['Direção defensiva', 'Antecipar riscos em vez de reagir tarde.', 'Dirigir defensivamente significa:', ['Prever situações de risco e agir para evitá-las.', 'Confiar que os outros sempre vão obedecer às regras.', 'Usar a buzina para garantir preferência.'], 0, 'A direção defensiva combina atenção, previsão e decisões que reduzem riscos.'],
+    ['Chuva e baixa visibilidade', 'Adaptar a condução às condições do tempo.', 'Em uma chuva forte, a primeira atitude deve ser:', ['Reduzir a velocidade e ampliar a distância de segurança.', 'Acionar o pisca-alerta e seguir normalmente.', 'Aproximar-se do veículo da frente para enxergar melhor.'], 0, 'Pista molhada e visibilidade reduzida exigem menor velocidade e mais espaço para parar.'],
+    ['Cruzamentos', 'Aproximar-se com cautela de conflitos de fluxo.', 'Ao se aproximar de um cruzamento sem boa visibilidade, você deve:', ['Reduzir e observar antes de avançar.', 'Acelerar para liberar a via rapidamente.', 'Presumir que os demais vão parar.'], 0, 'A aproximação cautelosa permite identificar veículos, pedestres e sinalização.'],
+    ['Mudança de faixa', 'Sinalizar e conferir antes de manobrar.', 'Antes de mudar de faixa, é necessário:', ['Sinalizar, conferir os espelhos e verificar o ponto cego.', 'Sinalizar depois de iniciar a manobra.', 'Confiar apenas no espelho retrovisor interno.'], 0, 'A verificação completa e a sinalização antecipada tornam a manobra previsível.'],
+    ['Emergências na via', 'Tomar decisões seguras diante de um imprevisto.', 'Se o veículo apresentar uma falha, procure:', ['Imobilizá-lo em local seguro e sinalizar a situação.', 'Parar imediatamente em qualquer faixa.', 'Continuar até o veículo deixar de funcionar.'], 0, 'Sair do fluxo e sinalizar reduz o risco para você e para os demais.'],
+    ['Antecipação de riscos', 'Ler o ambiente ao redor do veículo.', 'Ao passar por veículos estacionados, é prudente:', ['Observar portas, pessoas e possíveis saídas para a via.', 'Manter a atenção apenas no centro da faixa.', 'Acelerar para reduzir o tempo ao lado deles.'], 0, 'Pessoas podem abrir portas ou entrar na via. Antecipar esses movimentos permite reagir.'],
+    ['Reincidência e mudança', 'Transformar a reflexão em novas escolhas.', 'Para reduzir a chance de repetir uma infração, ajuda:', ['Identificar o hábito que levou à conduta e planejar uma alternativa.', 'Depender apenas da fiscalização.', 'Ignorar a situação depois de pagar a multa.'], 0, 'Reconhecer o comportamento e definir uma resposta diferente ajuda a evitar reincidência.'],
+    ['Rotina antes de sair', 'Preparar veículo, rota e condições pessoais.', 'Antes de iniciar uma viagem, é importante:', ['Verificar condições do veículo, rota e disposição para dirigir.', 'Conferir apenas o nível de combustível.', 'Deixar ajustes e planejamento para fazer na via.'], 0, 'Uma preparação simples previne distrações e problemas previsíveis durante o trajeto.'],
+    ['Autocontrole', 'Evitar que a pressa determine a condução.', 'Outro condutor age de forma provocadora. Qual é a resposta mais segura?', ['Evitar confronto e manter distância.', 'Acelerar para mostrar que você tem razão.', 'Seguir o veículo para discutir depois.'], 0, 'Não entrar em confronto reduz a escalada de risco e preserva a segurança de todos.'],
+    ['Influência dos passageiros', 'Manter decisões seguras mesmo sob pressão.', 'Um passageiro pede que você ultrapasse onde não há segurança. Você deve:', ['Recusar e manter uma distância segura.', 'Fazer a manobra para evitar discussão.', 'Ultrapassar se o passageiro estiver com pressa.'], 0, 'A decisão de condução continua sendo responsabilidade de quem dirige.'],
+    ['Compromisso com a segurança', 'Definir um hábito concreto para mudar.', 'Um compromisso útil para uma condução mais segura é:', ['Escolher uma atitude específica e praticá-la em todos os trajetos.', 'Esperar que a motivação apareça antes de mudar.', 'Mudar apenas quando houver fiscalização.'], 0, 'Mudanças consistentes começam com ações específicas que podem ser repetidas.'],
+    ['Decisão segura: cenário final', 'Aplicar o aprendizado a uma situação real.', 'Você está atrasado, chove e o trânsito está lento. Qual decisão reduz riscos?', ['Manter a calma, reduzir a velocidade e aceitar chegar depois.', 'Usar o celular para avisar enquanto dirige.', 'Seguir muito próximo ao veículo da frente.'], 0, 'Segurança vem antes da pressa. Reduzir a velocidade e evitar distrações protege todos na via.'],
+  ].map(([title, summary, question, options, answer, explanation], index) => ({
+    title,
+    summary,
+    question,
+    options,
+    answer,
+    explanation,
+    unit: Math.floor(index / 6),
+  }));
+
+  const units = ['Responsabilidade e regras', 'Percepção de riscos', 'Condução preventiva', 'Novos hábitos'];
+  const readProgress = () => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(pathStorageKey));
+      if (saved && Array.isArray(saved.completed)) {
+        return {
+          completed: [...new Set(saved.completed.filter((index) => Number.isInteger(index) && index >= 0 && index < lessons.length))],
+          startedAt: typeof saved.startedAt === 'string' ? saved.startedAt : null,
+          lastCompletedAt: typeof saved.lastCompletedAt === 'string' ? saved.lastCompletedAt : null,
+        };
+      }
+    } catch {
+      return { completed: [], startedAt: null, lastCompletedAt: null };
+    }
+    return { completed: [], startedAt: null, lastCompletedAt: null };
+  };
+
+  let progress = readProgress();
+  let selectedLesson = null;
+
+  const saveProgress = () => localStorage.setItem(pathStorageKey, JSON.stringify(progress));
+  const getElapsedDays = () => {
+    if (!progress.startedAt) return 0;
+    const [year, month, day] = progress.startedAt.split('-').map(Number);
+    const start = new Date(year, month - 1, day);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return Math.floor((today - start) / 86400000);
+  };
+  const getTodayDate = () => {
+    const today = new Date();
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  };
+  const isExpired = () => Boolean(progress.startedAt && getElapsedDays() >= 30 && progress.completed.length < lessons.length);
+  const getNextLesson = () => lessons.findIndex((_, index) => !progress.completed.includes(index));
+  const isNextAvailableToday = () => !progress.lastCompletedAt || getTodayDate() > progress.lastCompletedAt;
+
+  const renderSummary = () => {
+    const completedCount = progress.completed.length;
+    const progressTrack = document.querySelector('.progress-track');
+    document.getElementById('completed-count').textContent = completedCount;
+    document.getElementById('progress-fill').style.width = `${(completedCount / lessons.length) * 100}%`;
+    progressTrack.setAttribute('aria-valuenow', completedCount);
+
+    const deadlineStatus = document.getElementById('deadline-status');
+    if (!progress.startedAt) {
+      deadlineStatus.textContent = 'O prazo começa quando você iniciar a primeira etapa.';
+    } else if (completedCount === lessons.length) {
+      deadlineStatus.textContent = 'Percurso concluído. Obrigado por assumir esse compromisso.';
+    } else if (isExpired()) {
+      deadlineStatus.textContent = 'O prazo de 30 dias terminou. As etapas concluídas continuam disponíveis para revisão.';
+    } else {
+      const daysLeft = 30 - getElapsedDays();
+      const pacing = progress.lastCompletedAt === getTodayDate() ? ' · próxima etapa amanhã' : '';
+      deadlineStatus.textContent = `Dia ${getElapsedDays() + 1} de 30 · ${daysLeft} ${daysLeft === 1 ? 'dia restante' : 'dias restantes'}${pacing}.`;
+    }
+  };
+
+  const renderPath = () => {
+    let previousUnit = -1;
+    learningPath.innerHTML = lessons.map((lesson, index) => {
+      const isCompleted = progress.completed.includes(index);
+      const isNext = index === getNextLesson();
+      const isAvailable = isNext && isNextAvailableToday() && !isExpired();
+      const isLocked = !isCompleted && !isAvailable;
+      const unitHeading = lesson.unit !== previousUnit
+        ? `<h3 class="path-unit-title">${units[lesson.unit]}</h3>`
+        : '';
+      previousUnit = lesson.unit;
+      const status = isCompleted ? 'Concluída' : isAvailable ? 'Disponível' : isNext && isExpired() ? 'Prazo encerrado' : isNext ? 'Amanhã' : 'Bloqueada';
+
+      return `${unitHeading}
+        <button class="path-step${isCompleted ? ' is-completed' : ''}${isAvailable ? ' is-current' : ''}${isLocked ? ' is-locked' : ''}" type="button" data-lesson="${index}" ${isLocked ? 'disabled' : ''} aria-label="Dia ${index + 1}: ${lesson.title}. ${status}">
+          <span class="step-marker">${isCompleted ? '&#10003;' : String(index + 1).padStart(2, '0')}</span>
+          <span class="step-copy"><span class="step-day">DIA ${String(index + 1).padStart(2, '0')}</span><span class="step-title">${lesson.title}</span></span>
+          <span class="step-status">${status}</span>
+        </button>`;
+    }).join('');
+  };
+
+  const renderLesson = (index) => {
+    selectedLesson = index;
+    const lesson = lessons[index];
+    const isCompleted = progress.completed.includes(index);
+    const expired = isExpired() && !isCompleted;
+    const options = lesson.options.map((option, optionIndex) => `
+      <button class="lesson-option" type="button" data-option="${optionIndex}">
+        <span class="option-letter">${String.fromCharCode(65 + optionIndex)}</span><span>${option}</span>
+      </button>`).join('');
+
+    lessonView.innerHTML = `
+      <article class="lesson-content">
+        <p class="lesson-index">DIA ${String(index + 1).padStart(2, '0')} <span>·</span> ${units[lesson.unit]}</p>
+        <h2>${lesson.title}</h2>
+        <p class="lesson-summary">${lesson.summary}</p>
+        <div class="lesson-activity">
+          <span class="activity-label">REFLEXÃO</span>
+          <h3>${lesson.question}</h3>
+          <div class="lesson-options">${options}</div>
+          <p class="lesson-feedback" aria-live="polite"></p>
+          <div class="lesson-explanation" hidden></div>
+          <button class="lesson-continue" type="button" hidden>${index === lessons.length - 1 ? 'Concluir percurso' : 'Concluir etapa'}</button>
+        </div>
+        ${expired ? '<p class="lesson-expired">O prazo de 30 dias terminou. Esta etapa ainda pode ser revisada.</p>' : ''}
+        ${isCompleted ? '<p class="lesson-note">Etapa concluída. Você pode revisá-la quando quiser.</p>' : ''}
+      </article>`;
+
+    if (expired || isCompleted) {
+      lessonView.querySelectorAll('.lesson-option').forEach((button) => { button.disabled = true; });
+      lessonView.querySelector('.lesson-feedback').textContent = isCompleted ? 'Resposta registrada anteriormente.' : 'A etapa está disponível apenas para revisão.';
+      lessonView.querySelector('.lesson-continue').remove();
+    }
+  };
+
+  renderSummary();
+  renderPath();
+
+  learningPath.addEventListener('click', (event) => {
+    const step = event.target.closest('[data-lesson]');
+    if (!step || step.disabled) return;
+    const index = Number(step.dataset.lesson);
+    if (!progress.startedAt && !progress.completed.length) {
+      const now = new Date();
+      progress.startedAt = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      saveProgress();
+      renderSummary();
+    }
+    renderLesson(index);
+  });
+
+  lessonView.addEventListener('click', (event) => {
+    const option = event.target.closest('.lesson-option');
+    if (option && !option.disabled) {
+      const answer = Number(option.dataset.option);
+      const isCorrect = answer === lessons[selectedLesson].answer;
+      const feedback = lessonView.querySelector('.lesson-feedback');
+      const explanation = lessonView.querySelector('.lesson-explanation');
+      option.disabled = true;
+      option.classList.add(isCorrect ? 'is-correct' : 'is-incorrect');
+
+      if (isCorrect) {
+        lessonView.querySelectorAll('.lesson-option').forEach((button) => { button.disabled = true; });
+        feedback.textContent = 'Resposta correta.';
+        explanation.innerHTML = `<strong>Para levar com você</strong><span>${lessons[selectedLesson].explanation}</span>`;
+        explanation.hidden = false;
+        lessonView.querySelector('.lesson-continue').hidden = false;
+      } else {
+        feedback.textContent = 'Essa escolha não é a mais segura. Reflita e tente outra resposta.';
+      }
+      return;
+    }
+
+    if (event.target.closest('.lesson-continue')) {
+      const index = selectedLesson;
+      if (!progress.completed.includes(index)) {
+        progress.completed.push(index);
+        progress.completed.sort((first, second) => first - second);
+        progress.lastCompletedAt = getTodayDate();
+        saveProgress();
+      }
+      renderSummary();
+      renderPath();
+      if (progress.completed.length === lessons.length) {
+        lessonView.innerHTML = '<div class="lesson-complete"><span class="lesson-index">PERCURSO CONCLUÍDO</span><h2>Uma nova escolha, a cada trajeto.</h2><p>Você concluiu as 24 etapas. Leve esse compromisso para todas as suas viagens.</p></div>';
+      } else {
+        const nextLesson = getNextLesson();
+        const nextDay = String(nextLesson + 1).padStart(2, '0');
+        lessonView.innerHTML = `<div class="lesson-empty"><span class="lesson-index">DIA ${nextDay} <span>·</span> DISPONÍVEL AMANHÃ</span><h2>Por hoje, percurso concluído.</h2><p>Uma etapa por dia ajuda a transformar conhecimento em hábito. Sua próxima reflexão estará disponível amanhã.</p><span class="lesson-note">${lessons[nextLesson].title}</span></div>`;
+      }
+    }
+  });
+}
+
 if (questionContainer) {
   const bodyFront = document.body.dataset.front;
   const frontName = {

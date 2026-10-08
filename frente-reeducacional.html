@@ -3,59 +3,72 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Frente Reeducacional</title>
+    <title>Trilha de Reeducação no Trânsito</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="frente.css" />
   </head>
-  <body class="front-body front-page" data-front="reeducacional">
-    <main class="front-shell page-body">
-      <section class="front-card front-details">
-        <div class="page-badge">🛑</div>
-        <p class="mini-label">Frente escolhida</p>
-        <h1>Reeducacional</h1>
-        <p>Essa frente atua com condutores em processo de reeducação, com foco em reflexão, responsabilidade e mudança de comportamento para reduzir riscos no trânsito.</p>
-        <ul class="check-list">
-          <li>Reconhecer a gravidade das infrações e dos riscos.</li>
-          <li>Entender a responsabilidade social de cada ação.</li>
-          <li>Comprometer-se com a mudança de hábitos e autocontrole.</li>
-        </ul>
-        <div class="page-actions">
-          <a href="selecao-frente.html" class="btn btn-secondary">Trocar frente</a>
-          <a href="index.html" class="btn btn-primary">Voltar ao início</a>
-        </div>
+  <body class="front-body offender-page" data-front="reeducacional">
+    <main class="offender-shell">
+      <header class="offender-topbar">
+        <a class="offender-brand" href="index.html" aria-label="Voltar ao início">
+          <span class="brand-mark" aria-hidden="true">S</span>
+          <span>SETEC <span>· Educação no trânsito</span></span>
+        </a>
+        <nav class="offender-nav" aria-label="Navegação principal">
+          <a href="selecao-frente.html">Trocar frente</a>
+          <a href="index.html">Início</a>
+        </nav>
+      </header>
+
+      <section class="offender-heading" aria-labelledby="page-title">
+        <p class="offender-eyebrow">Programa de reeducação</p>
+        <h1 id="page-title">Uma escolha mais segura começa aqui.</h1>
+        <p>Um percurso diário de 24 dias para rever decisões, compreender riscos e construir hábitos mais responsáveis no trânsito.</p>
       </section>
 
-      <section class="activities-section">
-        <h2>Atividades da frente reeducacional</h2>
-        <div class="activities-grid">
-          <article class="activity-card">
-            <div class="activity-icon">⏱️</div>
-            <h3>Velocidade consciente</h3>
-            <p>Analisar as consequências do excesso de velocidade e os impactos na CNH e na segurança.</p>
-          </article>
-          <article class="activity-card">
-            <div class="activity-icon">⚖️</div>
-            <h3>Reflexão sobre infrações</h3>
-            <p>Entender o valor das multas, dos pontos e das consequências legais na vida do condutor.</p>
-          </article>
-          <article class="activity-card">
-            <div class="activity-icon">🔄</div>
-            <h3>Reeducação comportamental</h3>
-            <p>Trabalhar mudanças de hábito para reduzir riscos e promover responsabilidade no volante.</p>
-          </article>
+      <section class="journey-overview" aria-label="Resumo do percurso">
+        <div class="journey-progress-copy">
+          <div>
+            <p class="overview-label">Seu progresso</p>
+            <p class="progress-count"><strong id="completed-count">0</strong> de 24 dias concluídos</p>
+          </div>
+          <p class="deadline-copy" id="deadline-copy">Prazo máximo: 30 dias a partir do início</p>
         </div>
+        <div class="progress-track" role="progressbar" aria-label="Progresso da trilha" aria-valuemin="0" aria-valuemax="24" aria-valuenow="0">
+          <span id="progress-fill"></span>
+        </div>
+        <p class="deadline-status" id="deadline-status" aria-live="polite">O prazo começa quando você iniciar a primeira etapa.</p>
       </section>
 
-      <section class="questions-panel">
-        <div class="learning-heading">
-          <h2>Vamos aprender?</h2>
-          <p>Revise as regras e as consequências para construir escolhas mais seguras.</p>
-        </div>
-        <div id="questions-container"></div>
-      </section>
+      <div class="journey-layout">
+        <section class="path-section" aria-labelledby="path-title">
+          <div class="section-title-row">
+            <div>
+              <p class="offender-eyebrow">Trilha de conhecimento</p>
+              <h2 id="path-title">24 dias para seguir em frente</h2>
+            </div>
+            <span class="path-duration">24 dias <span aria-hidden="true">·</span> até 30 dias</span>
+          </div>
+          <div id="learning-path" class="learning-path"></div>
+        </section>
+
+        <aside id="lesson-view" class="lesson-panel" aria-live="polite" aria-label="Etapa selecionada">
+          <div class="lesson-empty">
+            <span class="lesson-index">PRÓXIMA ETAPA</span>
+            <h2>Seu percurso começa com uma decisão.</h2>
+            <p>Selecione a primeira etapa da trilha para iniciar. O avanço fica salvo neste dispositivo.</p>
+            <span class="lesson-note">24 dias · conclusão em até 30 dias</span>
+          </div>
+        </aside>
+      </div>
+
+      <footer class="offender-footer">
+        <span>Aprender com as consequências também é seguir em frente.</span>
+        <a href="selecao-frente.html">Voltar às frentes</a>
+      </footer>
     </main>
     <script type="module" src="script.js"></script>
   </body>
