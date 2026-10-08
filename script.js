@@ -305,10 +305,27 @@ if (learningPath && lessonView) {
     return { completed: [], startedAt: null, lastCompletedAt: null };
   };
 
-  let progress = readProgress();
+  const previewMode = new URLSearchParams(window.location.search).get('demo') === 'progress';
+  const formatLocalDate = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  const createPreviewProgress = () => {
+    const today = new Date();
+    const startedAt = new Date(today);
+    const lastCompletedAt = new Date(today);
+    startedAt.setDate(startedAt.getDate() - 6);
+    lastCompletedAt.setDate(lastCompletedAt.getDate() - 1);
+    return {
+      completed: [0, 1, 2, 3, 4, 5],
+      startedAt: formatLocalDate(startedAt),
+      lastCompletedAt: formatLocalDate(lastCompletedAt),
+    };
+  };
+
+  let progress = previewMode ? createPreviewProgress() : readProgress();
   let selectedLesson = null;
 
-  const saveProgress = () => localStorage.setItem(pathStorageKey, JSON.stringify(progress));
+  const saveProgress = () => {
+    if (!previewMode) localStorage.setItem(pathStorageKey, JSON.stringify(progress));
+  };
   const getElapsedDays = () => {
     if (!progress.startedAt) return 0;
     const [year, month, day] = progress.startedAt.split('-').map(Number);
@@ -404,6 +421,7 @@ if (learningPath && lessonView) {
 
   renderSummary();
   renderPath();
+  if (previewMode) document.getElementById('demo-progress-note').hidden = false;
 
   learningPath.addEventListener('click', (event) => {
     const step = event.target.closest('[data-lesson]');
@@ -625,8 +643,51 @@ if (questionContainer) {
   } else if (bodyFront === 'adulto') {
     let currentQuestionIndex = 0;
     let correctAnswers = 0;
+    const quizMascot = document.querySelector('.adult-quiz-mascot');
+    const quizGuideOrder = ['semaforo', 'parezinho'];
+    const quizMascotNames = {
+      semaforo: 'Semáforo',
+      parezinho: 'PareZinho',
+    };
+    const mascotEmotions = {
+      semaforo: {
+        happy: new URL('./turma.png', import.meta.url).href,
+        sad: new URL('./turma.png', import.meta.url).href,
+      },
+      parezinho: {
+        happy: new URL('./parezinho feliz.png', import.meta.url).href,
+        sad: new URL('./parezinho triste.png', import.meta.url).href,
+      },
+    };
+    const quizMascotMessages = {
+      semaforo: {
+        ready: 'Observe os sinais e avalie o que a via pede.',
+        correct: 'Atenção à sinalização ajuda a proteger todos.',
+        incorrect: 'Reveja a situação e escolha a conduta mais segura.',
+      },
+      parezinho: {
+        ready: 'Faça uma pausa e avalie os riscos antes de agir.',
+        correct: 'Decisões responsáveis começam com respeito ao próximo.',
+        incorrect: 'Na dúvida, reduza e dê prioridade à segurança.',
+      },
+    };
+
+    const setQuizMascot = (mascotName, mood, message) => {
+      const image = quizMascot.querySelector('img');
+      quizMascot.dataset.quizMascot = mascotName;
+      quizMascot.classList.remove('is-happy', 'is-sad');
+      quizMascot.classList.add(mood === 'happy' ? 'is-happy' : 'is-sad');
+      image.src = mascotEmotions[mascotName][mood];
+      image.alt = mascotName === 'semaforo'
+        ? 'Mascote do semáforo acompanhado pelos outros sinais educativos'
+        : `PareZinho ${mood === 'happy' ? 'está satisfeito' : 'orienta a rever a resposta'}`;
+      quizMascot.querySelector('.quiz-mascot-name').textContent = quizMascotNames[mascotName];
+      quizMascot.querySelector('.quiz-mascot-speech').textContent = message;
+    };
 
     const renderQuestion = () => {
+      const guide = quizGuideOrder[currentQuestionIndex % quizGuideOrder.length];
+      setQuizMascot(guide, 'happy', quizMascotMessages[guide].ready);
       const item = filteredQuestions[currentQuestionIndex];
       const optionButtons = Object.entries(item.opcoes)
         .map(([key, value]) => `
@@ -662,6 +723,7 @@ if (questionContainer) {
           <button class="next-question restart-quiz" type="button">Refazer desafio</button>
         </article>
       `;
+      setQuizMascot('semaforo', 'happy', 'Desafio concluído. Leve essa atenção para o próximo trajeto.');
     };
 
     renderQuestion();
@@ -690,6 +752,8 @@ if (questionContainer) {
         explanation.innerHTML = `<strong>Justificativa:</strong> ${filteredQuestions[currentQuestionIndex].justificativa}`;
         explanation.hidden = false;
         card.querySelector('.next-question').hidden = false;
+        const guide = quizGuideOrder[currentQuestionIndex % quizGuideOrder.length];
+        setQuizMascot(guide, isCorrect ? 'happy' : 'sad', quizMascotMessages[guide][isCorrect ? 'correct' : 'incorrect']);
         return;
       }
 
