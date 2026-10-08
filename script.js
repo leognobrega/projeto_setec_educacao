@@ -646,13 +646,13 @@ if (questionContainer) {
     const quizMascot = document.querySelector('.adult-quiz-mascot');
     const quizGuideOrder = ['semaforo', 'parezinho'];
     const quizMascotNames = {
-      semaforo: 'Semáforo',
+      semaforo: 'ZéMaforo',
       parezinho: 'PareZinho',
     };
     const mascotEmotions = {
       semaforo: {
-        happy: new URL('./turma.png', import.meta.url).href,
-        sad: new URL('./turma.png', import.meta.url).href,
+        happy: new URL('./zemaforo feliz.png', import.meta.url).href,
+        sad: new URL('./zemaforo triste.png', import.meta.url).href,
       },
       parezinho: {
         happy: new URL('./parezinho feliz.png', import.meta.url).href,
@@ -679,7 +679,7 @@ if (questionContainer) {
       quizMascot.classList.add(mood === 'happy' ? 'is-happy' : 'is-sad');
       image.src = mascotEmotions[mascotName][mood];
       image.alt = mascotName === 'semaforo'
-        ? 'Mascote do semáforo acompanhado pelos outros sinais educativos'
+        ? `ZéMaforo ${mood === 'happy' ? 'está feliz' : 'está triste'} com a resposta`
         : `PareZinho ${mood === 'happy' ? 'está satisfeito' : 'orienta a rever a resposta'}`;
       quizMascot.querySelector('.quiz-mascot-name').textContent = quizMascotNames[mascotName];
       quizMascot.querySelector('.quiz-mascot-speech').textContent = message;
